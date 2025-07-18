@@ -1,0 +1,5 @@
+# Javascript dependencies
+node_modules
+
+# Private environtment variable
+.env
