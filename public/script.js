@@ -11,10 +11,24 @@ form.addEventListener('submit', function (e) {
   appendMessage('user', userMessage);
   input.value = '';
 
-  // Simulasi dummy balasan bot (placeholder)
-  setTimeout(() => {
-    appendMessage('bot', 'Gemini is thinking... (this is dummy response)');
-  }, 1000);
+  fetch('/api/chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ message: userMessage }),
+  })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        appendMessage('bot', data.message);
+      } else {
+        appendMessage('bot', 'Error: ' + data.message);
+      }
+    })
+    .catch(error => {
+      appendMessage('bot', 'Error: ' + error.message);
+    });
 });
 
 function appendMessage(sender, text) {
