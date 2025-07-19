@@ -1,41 +1,97 @@
-const form = document.getElementById('chat-form');
-const input = document.getElementById('user-input');
-const chatBox = document.getElementById('chat-box');
-const loadingIndicator = document.getElementById('loading');
-
-form.addEventListener('submit', function (e) {
-  e.preventDefault();
-
-  const userMessage = input.value.trim();
-  if (!userMessage) return;
-
-  appendMessage('user', userMessage);
-  input.value = '';
-
-  loadingIndicator.style.display = 'block'; // Show loading indicator
-
-  fetch('/api/chat', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
+function chatbot() {
+  return {
+    content: '',
+    messages: [],
+    welcomeMessage: true,
+    loading: false,
+    init() {
+      this.$nextTick(() => {
+        this.scrollToBottom();
+      });
     },
-    body: JSON.stringify({ message: userMessage }),
-  })
-    .then(response => response.json())
-    .then(data => {
-      if (data.status === 'success') {
-        appendMessage('bot', data.message);
-      } else {
-        appendMessage('bot', `Error: ${data.message}`); // Use template literals
+    scrollToBottom() {
+      this.$nextTick(() => {
+        const container = this.$refs.chatContainer;
+        container.scrollTop = container.scrollHeight;
+      });
+    },
+    async sendMessage() {
+      if (!this.content.trim() || this.content.length > 100) return;
+
+      this.welcomeMessage = false;
+
+      // Tambahkan pesan pengguna
+      this.messages.push({ from: 'user', text: this.content });
+
+      const userMessage = this.content;
+      this.content = '';
+      this.loading = true;
+
+      try {
+        const response = await fetch('/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ message: userMessage }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data || !data.message) {
+          throw new Error("Respon tidak valid");
+        }
+
+        this.messages.push({ from: 'bot', text: data.message });
+      } catch (error) {
+        this.messages.push({ from: 'error', text: 'Ada kesalahan. Coba lagi nanti.' });
+      } finally {
+        this.loading = false;
+        this.scrollToBottom();
       }
-    })
-    .catch(error => {
-      appendMessage('bot', `Error: ${error.message}`);  // Use template literals
-    })
-    .finally(() => {
-      loadingIndicator.style.display = 'none'; // Hide loading indicator in either case
-    });
-});
+    }
+  };
+}
+
+function typewriterMarkdown(markdownText) {
+  return {
+    display: '',
+    fullText: markdownText,
+    done: false,
+    i: 0,
+    startTyping() {
+      const type = () => {
+        if (this.i < this.fullText.length) {
+          this.display += this.fullText.charAt(this.i++);
+          setTimeout(type, 5); // kecepatan ketik
+        } else {
+          this.done = true;
+        }
+      };
+      type();
+    }
+  };
+}
+
+fetch('/api/chat', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ message: userMessage }),
+})
+  .then(response => response.json())
+  .then(data => {
+    if (data.status === 'success') {
+      appendMessage('bot', data.message);
+    } else {
+      appendMessage('bot', `Error: ${data.message}`); // Use template literals
+    }
+  })
+  .catch(error => {
+    appendMessage('bot', `Error: ${error.message}`);  // Use template literals
+  })
+  .finally(() => {
+    loadingIndicator.style.display = 'none'; // Hide loading indicator in either case
+  });
 
 
 function appendMessage(sender, text) {
