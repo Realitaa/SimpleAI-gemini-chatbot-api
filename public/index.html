@@ -7,7 +7,13 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
+  <style>
+    @media (min-width: 768px) {
+      .w-md-75 {
+        width: 75% !important;
+      }
+    }
+  </style>
 </head>
 <body>
   <nav class="navbar bg-body-tertiary">
@@ -45,7 +51,7 @@
               <!-- Chat dari BOT dengan efek ketik + Markdown -->
               <template x-if="msg.from === 'bot'">
                 <div 
-                  class="text-wrap p-3 rounded-5 bg-success-subtle w-75"
+                  class="text-wrap p-3 rounded-5 bg-success-subtle w-md-75 w-100"
                   x-data="typewriterMarkdown(msg.text)"
                   x-init="startTyping"
                 >
@@ -64,7 +70,7 @@
               <!-- Chat dari USER atau ERROR -->
               <template x-if="msg.from !== 'bot'">
                 <div 
-                  class="text-wrap p-3 rounded-5 w-75"
+                  class="text-wrap p-3 rounded-5 w-md-75 w-100"
                   :class="{
                     'bg-primary-subtle': msg.from === 'user',
                     'bg-danger-subtle': msg.from === 'error'
