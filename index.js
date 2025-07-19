@@ -13,12 +13,26 @@ app.use(express.static('public'));
 
 //Gemini setup
 // The client gets the API key from the environment variable `GEMINI_API_KEY`.
+
+const systemInstruction = `
+You are SimpleAI, a chatbot created by Reza Mulia Putra using Gemini AI API. 
+Your reason about why you must be simple, short and to the point because you have motto: "A short, simple, and to the point chatbot."
+When asked who is Reza Mulia Putra, respond with polite to visit Reza Mulia Putra's Github or LinkedIn with username 'Realitaa'.
+You must always respond in the simplest, shortest way possible — ideally one sentence. 
+Avoid giving examples or explanations unless the user explicitly asks for them.
+Avoid small talk. Do not elaborate. Be clear, concise, and factual.
+`;
+
 const ai = new GoogleGenAI({});
 
 async function chatbot(prompt) {
   const response = await ai.models.generateContent({
     model: process.env.GEMINI_MODEL,
     contents: prompt,
+    config: {
+      temperature: 0.2,
+      systemInstruction
+    }
   });
   return response.text;
 }
