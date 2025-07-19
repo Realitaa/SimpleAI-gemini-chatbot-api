@@ -1,6 +1,6 @@
-# Gemini Chatbot API
+# SimpleAI - Gemini Chatbot API
 
-A simple chatbot page to simulate chatting with generative AI model from Google Gemini API.
+A simple chatbot page to simulate chatting with generative AI model from Google Gemini API. This chatbot model have a motto: "A short, simple and to the point chatbot".
 
 ## Table of Contents
 
@@ -24,8 +24,8 @@ Follow these instructions to get a local copy up and running.
 
 1.  **Clone the repository:**
     ```sh
-    git clone https://github.com/Realitaa/gemini-chatbot-api.git
-    cd gemini-chatbot-api
+    git clone https://github.com/Realitaa/SimpleAI-gemini-chatbot-api.git
+    cd SimpleAI-gemini-chatbot-api
     ```
 
 2.  **Install dependencies:**
